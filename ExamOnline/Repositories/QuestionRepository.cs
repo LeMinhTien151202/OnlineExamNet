@@ -1,4 +1,6 @@
 ﻿
+using ExamOnline.Interfaces.IQuestion;
+
 namespace ExamOnline.Repositories
 {
     public class QuestionRepository : IQuestionRepository

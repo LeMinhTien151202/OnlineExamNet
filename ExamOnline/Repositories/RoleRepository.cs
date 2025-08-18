@@ -1,4 +1,6 @@
 ﻿
+using ExamOnline.Interfaces.IRole;
+
 namespace ExamOnline.Repositories
 {
     public class RoleRepository : IRoleRepository

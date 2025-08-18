@@ -1,6 +1,8 @@
 ﻿
 
 
+using ExamOnline.Interfaces.IExam;
+
 namespace ExamOnline.Repositories
 {
     public class ExamRepository : IExamRepository

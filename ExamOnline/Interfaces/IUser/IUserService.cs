@@ -1,6 +1,6 @@
-﻿namespace ExamOnline.Interfaces
+﻿namespace ExamOnline.Interfaces.IUser
 {
-    public interface IUserRepository
+    public interface IUserService
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User?> GetUserByIdAsync(int id);

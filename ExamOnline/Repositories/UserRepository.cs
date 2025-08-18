@@ -1,4 +1,6 @@
 ﻿
+using ExamOnline.Interfaces.IUser;
+
 namespace ExamOnline.Repositories
 {
     public class UserRepository : IUserRepository

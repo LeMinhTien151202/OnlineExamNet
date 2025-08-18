@@ -1,5 +1,7 @@
 ﻿
 
+using ExamOnline.Interfaces.IResult;
+
 namespace ExamOnline.Repositories
 {
     public class ResultRepository : IResultRepository

@@ -1,6 +1,6 @@
-﻿namespace ExamOnline.Interfaces
+﻿namespace ExamOnline.Interfaces.IExam
 {
-    public interface IExamService
+    public interface IExamRepository
     {
         Task<IEnumerable<Exam>> GetAllExamsAsync();
         Task<Exam?> GetExamByIdAsync(int id);
@@ -9,6 +9,6 @@
         Task<bool> DeleteExamAsync(int id);
         Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(int categoryId);
         Task<IEnumerable<Exam>> GetExamsByLevelIdAsync(int levelId);
-        Task<IEnumerable<Exam>> SearchExamsAsync(string searchTerm);
+        Task<IEnumerable<Exam>> GetExamsByUserIdAsync(int userId);
     }
 }

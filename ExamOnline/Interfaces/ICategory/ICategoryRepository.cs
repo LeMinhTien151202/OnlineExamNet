@@ -1,5 +1,4 @@
-﻿
-namespace ExamOnline.Interfaces
+﻿namespace ExamOnline.Interfaces.ICategory
 {
     public interface ICategoryRepository
     {
