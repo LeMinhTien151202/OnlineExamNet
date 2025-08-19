@@ -1,6 +1,10 @@
 using ExamOnline.Data;
 using ExamOnline.Interfaces.ICategory;
+using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
+using ExamOnline.Interfaces.IQuestion;
+using ExamOnline.Interfaces.IResult;
+using ExamOnline.Interfaces.IRole;
 using ExamOnline.Repositories;
 using ExamOnline.Services;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +21,14 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ILevelRepository, LevelRepository>();
 builder.Services.AddScoped<ILevelService, LevelService>();
+builder.Services.AddScoped<IExamRepository, ExamRepository>();
+builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IResultRepository, ResultRepository>();
+builder.Services.AddScoped<IResultService, ResultService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -1,43 +1,63 @@
 ﻿
 using ExamOnline.Interfaces.IQuestion;
+using ExamOnline.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExamOnline.Repositories
 {
     public class QuestionRepository : IQuestionRepository
     {
-        public Task<QuestionDTO?> CreateQuestionAsync(QuestionDTO questionDTO)
+        private readonly ExamOnlineContext _context;
+
+        public QuestionRepository(ExamOnlineContext context)
+        {
+            _context = context;
+
+        }
+        public async Task<Question?> CreateAsync(Question question)
+        {
+            await _context.Questions.AddAsync(question);
+            await _context.SaveChangesAsync();
+            return question;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var question = await _context.Questions.FindAsync(id);
+            if (question == null) 
+            {
+                return false;
+            }
+            _context.Questions.Remove(question);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<Question>> GetAllAsync()
+        {
+            return await _context.Questions.ToListAsync();
+        }
+
+        public async Task<Question?> GetByIdAsync(int id)
+        {
+            return await _context.Questions.FindAsync(id);
+        }
+
+        public Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteQuestionAsync(int id)
+        public Task<IEnumerable<Question>> SearchQuestionsAsync(string searchTerm)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<QuestionDTO>> GetAllQuestionsAsync()
+        public async Task<Question?> UpdateAsync(Question question)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<QuestionDTO?> GetQuestionByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<QuestionDTO>> GetQuestionsByExamIdAsync(int examId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<QuestionDTO>> SearchQuestionsAsync(string searchTerm)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<QuestionDTO?> UpdateQuestionAsync(QuestionDTO questionDTO)
-        {
-            throw new NotImplementedException();
+            _context.Questions.Update(question);
+            await _context.SaveChangesAsync();
+            return question;
         }
     }
 }

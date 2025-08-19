@@ -15,14 +15,17 @@ namespace ExamOnline.Services
             _mapper = mapper;
         }
 
-        public Task<Level?> CreateLevelAsync(LevelDTO levelDTO)
+        public async Task<Level?> CreateLevelAsync(LevelDTO levelDTO)
         {
-            throw new NotImplementedException();
+            var level = _mapper.Map<Level>(levelDTO);
+            var createdLevel = await _levelRepository.CreateAsync(level);
+            return createdLevel;
         }
 
-        public Task<bool> DeleteLevelAsync(int id)
+        public async Task<bool> DeleteLevelAsync(int id)
         {
-            throw new NotImplementedException();
+            var isDeleted = await _levelRepository.DeleteAsync(id);
+            return isDeleted;
         }
 
         public async Task<IEnumerable<Level>> GetAllLevelAsync()

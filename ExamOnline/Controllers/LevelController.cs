@@ -38,7 +38,7 @@ namespace ExamOnline.Controllers
                 return BadRequest("Level cannot be null.");
             }
             var createdLevel = await levelService.CreateLevelAsync(levelDTO);
-            return CreatedAtAction(nameof(GetLevelById), new { id = createdLevel.LevelId }, createdLevel);
+            return Ok(createdLevel);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateLevel(int id, [FromBody] LevelDTO levelDTO)

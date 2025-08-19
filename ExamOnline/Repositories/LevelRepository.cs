@@ -49,7 +49,7 @@ namespace ExamOnline.Repositories
 
         public async Task<Level?> UpdateAsync(Level level)
         {
-            await _context.Levels.AddAsync(level);
+            _context.Levels.Update(level);
             await _context.SaveChangesAsync();
             return level;
         }

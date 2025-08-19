@@ -5,17 +5,22 @@ namespace ExamOnline.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task<User?> CreateUserAsync(User user)
+        public Task<User?> CreateAsync(User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteUserAsync(int id)
+        public Task<bool> DeleteAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<User>> GetAllUsersAsync()
+        public Task<IEnumerable<User>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User?> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -25,17 +30,12 @@ namespace ExamOnline.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<User?> GetUserByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IEnumerable<User>> SearchUsersAsync(string searchTerm)
         {
             throw new NotImplementedException();
         }
 
-        public Task<User?> UpdateUserAsync(User user)
+        public Task<User?> UpdateAsync(User user)
         {
             throw new NotImplementedException();
         }
