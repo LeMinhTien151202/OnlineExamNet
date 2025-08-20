@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IQuestion;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,7 @@ namespace ExamOnline.Controllers
             return Ok(question);
         }
         [HttpPost]
+        //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> CreateQuestion([FromBody] QuestionDTO questionDTO)
         {
             if (questionDTO == null)
@@ -41,6 +43,7 @@ namespace ExamOnline.Controllers
             return Ok(createdQuestion);
         }
         [HttpPut("{id}")]
+        //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> UpdateQuestion(int id, [FromBody] QuestionDTO questionDTO)
         {
             if (questionDTO == null)
@@ -55,6 +58,7 @@ namespace ExamOnline.Controllers
             return Ok(updatedQuestion);
         }
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
             var result = await _questionService.DeleteQuestionAsync(id);

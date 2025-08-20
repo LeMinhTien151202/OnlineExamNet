@@ -42,17 +42,6 @@ namespace ExamOnline.Repositories
         {
             return await _context.Questions.FindAsync(id);
         }
-
-        public Task<IEnumerable<Question>> GetQuestionsByExamIdAsync(int examId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Question>> SearchQuestionsAsync(string searchTerm)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Question?> UpdateAsync(Question question)
         {
             _context.Questions.Update(question);

@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ILevel;
 using ExamOnline.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,7 @@ namespace ExamOnline.Controllers
             return Ok(level);
         }
         [HttpPost]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateLevel([FromBody] LevelDTO levelDTO)
         {
             if (levelDTO == null)
@@ -41,6 +43,7 @@ namespace ExamOnline.Controllers
             return Ok(createdLevel);
         }
         [HttpPut("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateLevel(int id, [FromBody] LevelDTO levelDTO)
         {
             if (levelDTO == null)
@@ -55,6 +58,7 @@ namespace ExamOnline.Controllers
             return Ok(updatedLevel);
         }
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteLevel(int id)
         {
             var result = await levelService.DeleteLevelAsync(id);

@@ -1,6 +1,5 @@
 ﻿
 using ExamOnline.Interfaces.ILevel;
-using ExamOnline.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamOnline.Repositories

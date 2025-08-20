@@ -1,6 +1,4 @@
 ﻿
-
-
 using ExamOnline.Interfaces.IExam;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +19,6 @@ namespace ExamOnline.Repositories
             await _context.SaveChangesAsync();
             return exam;
         }
-
         public async Task<bool> DeleteAsync(int id)
         {
             var exam = await _context.Exams.FindAsync(id);

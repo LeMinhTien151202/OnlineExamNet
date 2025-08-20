@@ -1,5 +1,7 @@
 ﻿using ExamOnline.Dtos;
+using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
+using ExamOnline.Interfaces.ILevel;
 
 namespace ExamOnline.Services
 {
@@ -7,13 +9,28 @@ namespace ExamOnline.Services
     {
         private readonly IExamRepository _examRepository;
         private readonly IMapper _mapper;
-        public ExamService(IMapper mapper, IExamRepository examRepository)
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly ILevelRepository _levelRepository;
+        public ExamService(IMapper mapper, IExamRepository examRepository,
+            ICategoryRepository categoryRepository, ILevelRepository levelRepository)
         {
             _mapper = mapper;
             _examRepository = examRepository;
+            _categoryRepository = categoryRepository;
+            _levelRepository = levelRepository;
         } 
         public async Task<Exam?> CreateExamAsync(ExamDTO examDTO)
         {
+            var existingCategory = await _categoryRepository.GetByIdAsync(examDTO.CategoryId);
+            if (existingCategory == null)
+            {
+                throw new ArgumentException($"Category with ID {examDTO.CategoryId} does not exist.");
+            }
+            var existingLevel = await _levelRepository.GetByIdAsync(examDTO.LevelId);
+            if (existingLevel == null)
+            {
+                throw new ArgumentException($"Level with ID {examDTO.LevelId} does not exist.");
+            }
             var exam = _mapper.Map<Exam>(examDTO);
             var createdExam = await _examRepository.CreateAsync(exam);
             return createdExam;
@@ -26,31 +43,31 @@ namespace ExamOnline.Services
 
         public async Task<IEnumerable<Exam>> GetAllExamsAsync()
         {
-            return await _examRepository.GetAllAsync();
+            var exams = await _examRepository.GetAllAsync();
+            return exams;
         }
 
         public async Task<Exam?> GetExamByIdAsync(int id)
         {
-            return await _examRepository.GetByIdAsync(id);
+           var exam = await _examRepository.GetByIdAsync(id);
+            if (exam == null)
+            {
+                return null; // Exam not found
+            }
+            return exam;
         }
-
-        public Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(int categoryId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Exam>> GetExamsByLevelIdAsync(int levelId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Exam>> SearchExamsAsync(string searchTerm)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Exam?> UpdateExamAsync(int id, ExamDTO examDTO)
         {
+            var existingCategory = await _categoryRepository.GetByIdAsync(examDTO.CategoryId);
+            if (existingCategory == null)
+            {
+                throw new ArgumentException($"Category with ID {examDTO.CategoryId} does not exist.");
+            }
+            var existingLevel = await _levelRepository.GetByIdAsync(examDTO.LevelId);
+            if (existingLevel == null)
+            {
+                throw new ArgumentException($"Level with ID {examDTO.LevelId} does not exist.");
+            }
             var existingExam = await _examRepository.GetByIdAsync(id);
             if (existingExam == null)
             {

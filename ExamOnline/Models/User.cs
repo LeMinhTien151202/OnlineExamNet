@@ -31,6 +31,6 @@ namespace ExamOnline.Models
         [ForeignKey("RoleId")]
         public virtual Role? Role { get; set; }
 
-        public virtual ICollection<Result> Results { get; set; } = new List<Result>();
+        //public virtual ICollection<Result> Results { get; set; } = new List<Result>();
     }
 }

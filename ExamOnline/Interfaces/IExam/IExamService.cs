@@ -7,8 +7,8 @@
         Task<Exam?> CreateExamAsync(ExamDTO examDTO);
         Task<Exam?> UpdateExamAsync(int id, ExamDTO examDTO);
         Task<bool> DeleteExamAsync(int id);
-        Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(int categoryId);
-        Task<IEnumerable<Exam>> GetExamsByLevelIdAsync(int levelId);
-        Task<IEnumerable<Exam>> SearchExamsAsync(string searchTerm);
+        //Task<IEnumerable<Exam>> GetExamsByCategoryIdAsync(int categoryId);
+        //Task<IEnumerable<Exam>> GetExamsByLevelIdAsync(int levelId);
+        //Task<IEnumerable<Exam>> SearchExamsAsync(string searchTerm);
     }
 }

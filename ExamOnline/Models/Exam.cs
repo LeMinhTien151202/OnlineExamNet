@@ -35,8 +35,8 @@ namespace ExamOnline.Models
         [ForeignKey("LevelId")]
         public virtual Level? Level { get; set; }
 
-        public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
-        public virtual ICollection<Result> Results { get; set; } = new List<Result>();
+        //public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+        //public virtual ICollection<Result> Results { get; set; } = new List<Result>();
      
     }
 }

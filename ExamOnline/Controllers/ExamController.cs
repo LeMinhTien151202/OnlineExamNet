@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,14 +24,15 @@ namespace ExamOnline.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExamById(int id)
         {
-            var category = await _examService.GetExamByIdAsync(id);
-            if (category == null)
+            var exam = await _examService.GetExamByIdAsync(id);
+            if (exam == null)
             {
                 return NotFound();
             }
-            return Ok(category);
+            return Ok(exam);
         }
         [HttpPost]
+        //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> CreateExam([FromBody] ExamDTO examDTO)
         {
             if (examDTO == null)
@@ -38,9 +40,10 @@ namespace ExamOnline.Controllers
                 return BadRequest("exam cannot be null.");
             }
             var createdExam = await _examService.CreateExamAsync(examDTO);
-            return CreatedAtAction(nameof(GetExamById), createdExam);
+            return Ok(examDTO);
         }
         [HttpPut("{id}")]
+        //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> UpdateExam(int id, [FromBody] ExamDTO examDTO)
         {
             if (examDTO == null)
@@ -55,6 +58,7 @@ namespace ExamOnline.Controllers
             return Ok(updatedExam);
         }
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> DeleteExam(int id)
         {
             var result = await _examService.DeleteExamAsync(id);

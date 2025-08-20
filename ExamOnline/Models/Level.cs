@@ -13,6 +13,6 @@ namespace ExamOnline.Models
         public string? LevelName { get; set; }
 
         // Navigation property
-        public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
+        //public virtual ICollection<Exam> Exams { get; set; } = new List<Exam>();
     }
 }

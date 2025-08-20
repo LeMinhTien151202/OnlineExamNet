@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.IRole;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,6 +32,7 @@ namespace ExamOnline.Controllers
             return Ok(role);
         }
         [HttpPost]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateRole([FromBody] RoleDTO roleDTO)
         {
             if (roleDTO == null)
@@ -41,6 +43,7 @@ namespace ExamOnline.Controllers
             return Ok(createdRole);
         }
         [HttpPut("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateRole(int id, [FromBody] RoleDTO roleDTO)
         {
             if (roleDTO == null)
@@ -55,6 +58,7 @@ namespace ExamOnline.Controllers
             return Ok(updatedRole);
         }
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             var result = await _roleService.DeleteRoleAsync(id);

@@ -1,5 +1,7 @@
 ﻿using ExamOnline.Dtos;
+using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.IResult;
+using ExamOnline.Interfaces.IUser;
 
 namespace ExamOnline.Services
 {
@@ -7,13 +9,28 @@ namespace ExamOnline.Services
     {
         private readonly IResultRepository _resultRepository;
         private readonly IMapper _mapper;
-        public ResultService(IResultRepository resultRepository, IMapper mapper)
+        private readonly IExamRepository _examRepository;
+        private readonly IUserRepository _userRepository;
+        public ResultService(IResultRepository resultRepository, IMapper mapper,
+            IExamRepository examRepository, IUserRepository userRepository)
         {
             _resultRepository = resultRepository;
             _mapper = mapper;
+            _examRepository = examRepository;
+            _userRepository = userRepository;
         }
         public async Task<Result?> CreateResultAsync(ResultDTO resultDTO)
         {
+            var existingExam = await _examRepository.GetByIdAsync(resultDTO.ExamId);
+            if (existingExam == null)
+            {
+                throw new ArgumentException($"Exam with ID {resultDTO.ExamId} does not exist.");
+            }
+            var existingUser = await _userRepository.GetByIdAsync(resultDTO.UserId);
+            if (existingUser == null)
+            {
+                throw new ArgumentException($"User with ID {resultDTO.UserId} does not exist.");
+            }
             var result = _mapper.Map<Result>(resultDTO);
             var createdResult = await _resultRepository.CreateAsync(result);
             return createdResult;
@@ -33,22 +50,6 @@ namespace ExamOnline.Services
         {
             return await _resultRepository.GetByIdAsync(id);
         }
-
-        public Task<IEnumerable<Result>> GetResultsByCategoryIdAsync(int categoryId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Result>> GetResultsByExamIdAsync(int examId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Result>> GetResultsByUserIdAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Result?> UpdateResultAsync(int id, ResultDTO resultDTO)
         {
             var existingResult = await _resultRepository.GetByIdAsync(id);

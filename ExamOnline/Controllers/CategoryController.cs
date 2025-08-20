@@ -1,4 +1,5 @@
 ﻿using ExamOnline.Interfaces.ICategory;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,7 @@ namespace ExamOnline.Controllers
             return Ok(category);
         }
         [HttpPost]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryDTO categoryDTO)
         {
             if (categoryDTO == null)
@@ -40,6 +42,7 @@ namespace ExamOnline.Controllers
             return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.CategoryId }, createdCategory);
         }
         [HttpPut("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDTO categoryDTO)
         {
             if (categoryDTO == null)
@@ -54,6 +57,7 @@ namespace ExamOnline.Controllers
             return Ok(updatedCategory);
         }
         [HttpDelete("{id}")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var result = await categoryService.DeleteCategoryAsync(id);

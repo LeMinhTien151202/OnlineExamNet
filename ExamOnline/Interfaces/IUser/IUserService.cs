@@ -4,10 +4,9 @@
     {
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<User?> GetUserByIdAsync(int id);
-        Task<User?> CreateUserAsync(User userDTO);
-        Task<User?> UpdateUserAsync(int id,User userDTO);
+        Task<string?> RegisterAsync(RegisterDTO registerDTO);
+        Task<string?> LoginAsync(LoginDTO loginDTO);
+        Task<User?> UpdateUserAsync(int id, RegisterDTO registerDTO);
         Task<bool> DeleteUserAsync(int id);
-        Task<User?> GetUserByEmailAsync(string email);
-        Task<IEnumerable<User>> SearchUsersAsync(string searchTerm);
     }
 }

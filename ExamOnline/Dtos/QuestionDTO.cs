@@ -2,8 +2,7 @@
 {
     public class QuestionDTO
     {
-        public int QuestionId { get; set; }
-        public int? ExamId { get; set; }
+        public int ExamId { get; set; }
         public string? Content { get; set; }
         public string? AnswerA { get; set; }
         public string? AnswerB { get; set; }
