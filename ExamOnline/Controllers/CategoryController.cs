@@ -1,4 +1,5 @@
 ﻿using ExamOnline.Interfaces.ICategory;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace ExamOnline.Controllers
             var category = await categoryService.GetCategoryByIdAsync(id);
             if (category == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Category {id} not found");
             }
             return Ok(category);
         }
@@ -36,7 +37,7 @@ namespace ExamOnline.Controllers
         {
             if (categoryDTO == null)
             {
-                return BadRequest("Category cannot be null.");
+                throw new BadRequestException("Invalid category data");
             }
             var createdCategory = await categoryService.CreateCategoryAsync(categoryDTO);
             return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.CategoryId }, createdCategory);
@@ -47,12 +48,12 @@ namespace ExamOnline.Controllers
         {
             if (categoryDTO == null)
             {
-                return BadRequest("Category ID mismatch or null category.");
+                throw new BadRequestException("Category ID mismatch or null category.");
             }
             var updatedCategory = await categoryService.UpdateCategoryAsync(id, categoryDTO);
             if (updatedCategory == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Category {id} not found");
             }
             return Ok(updatedCategory);
         }
@@ -63,7 +64,7 @@ namespace ExamOnline.Controllers
             var result = await categoryService.DeleteCategoryAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"Category {id} not found");
             }
             return NoContent();
         }

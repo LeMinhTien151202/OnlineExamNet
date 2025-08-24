@@ -9,6 +9,7 @@ using ExamOnline.Interfaces.IToken;
 using ExamOnline.Interfaces.IUser;
 using ExamOnline.Repositories;
 using ExamOnline.Services;
+using ExceptionHandleDemo.Exceptions.Handles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -87,6 +88,10 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -100,7 +105,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseExceptionHandler();
 app.MapControllers();
 
 app.Run();
