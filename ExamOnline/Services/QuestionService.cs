@@ -3,6 +3,7 @@ using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
 using ExamOnline.Interfaces.IQuestion;
 using ExamOnline.Repositories;
+using ExceptionHandleDemo.Exceptions;
 
 namespace ExamOnline.Services
 {
@@ -20,10 +21,6 @@ namespace ExamOnline.Services
         public async Task<Question?> CreateQuestionAsync(QuestionDTO questionDTO)
         {
             var existingExam = await _examRepository.GetByIdAsync(questionDTO.ExamId);
-            if (existingExam == null)
-            {
-                throw new ArgumentException($"Exam with ID {questionDTO.ExamId} does not exist.");
-            }
             var question = _mapper.Map<Question>(questionDTO);
             var createdQuestion = await _questionRepository.CreateAsync(question);
             return createdQuestion;
@@ -48,7 +45,7 @@ namespace ExamOnline.Services
             var existingExam = await _examRepository.GetByIdAsync(questionDTO.ExamId);
             if (existingExam == null)
             {
-                throw new ArgumentException($"Exam with ID {questionDTO.ExamId} does not exist.");
+                throw new BadRequestException($"Exam with ID {questionDTO.ExamId} does not exist.");
             }
             var existingQuestin = await _questionRepository.GetByIdAsync(id);
             if (existingQuestin == null)

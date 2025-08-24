@@ -2,6 +2,7 @@
 using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.IResult;
 using ExamOnline.Interfaces.IUser;
+using ExceptionHandleDemo.Exceptions;
 
 namespace ExamOnline.Services
 {
@@ -24,12 +25,12 @@ namespace ExamOnline.Services
             var existingExam = await _examRepository.GetByIdAsync(resultDTO.ExamId);
             if (existingExam == null)
             {
-                throw new ArgumentException($"Exam with ID {resultDTO.ExamId} does not exist.");
+                throw new BadRequestException($"Exam with ID {resultDTO.ExamId} does not exist.");
             }
             var existingUser = await _userRepository.GetByIdAsync(resultDTO.UserId);
             if (existingUser == null)
             {
-                throw new ArgumentException($"User with ID {resultDTO.UserId} does not exist.");
+                throw new BadRequestException($"User with ID {resultDTO.UserId} does not exist.");
             }
             var result = _mapper.Map<Result>(resultDTO);
             var createdResult = await _resultRepository.CreateAsync(result);
@@ -52,6 +53,16 @@ namespace ExamOnline.Services
         }
         public async Task<Result?> UpdateResultAsync(int id, ResultDTO resultDTO)
         {
+            var existingExam = await _examRepository.GetByIdAsync(resultDTO.ExamId);
+            if (existingExam == null)
+            {
+                throw new BadRequestException($"Exam with ID {resultDTO.ExamId} does not exist.");
+            }
+            var existingUser = await _userRepository.GetByIdAsync(resultDTO.UserId);
+            if (existingUser == null)
+            {
+                throw new BadRequestException($"User with ID {resultDTO.UserId} does not exist.");
+            }
             var existingResult = await _resultRepository.GetByIdAsync(id);
             if (existingResult == null)
             {

@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.IRole;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace ExamOnline.Controllers
             var role = await _roleService.GetRoleByIdAsync(id);
             if (role == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Role {id} not found");
             }
             return Ok(role);
         }
@@ -37,7 +38,7 @@ namespace ExamOnline.Controllers
         {
             if (roleDTO == null)
             {
-                return BadRequest("role cannot be null.");
+                throw new BadRequestException("Invalid role data");
             }
             var createdRole = await _roleService.CreateRoleAsync(roleDTO);
             return Ok(createdRole);
@@ -46,14 +47,10 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateRole(int id, [FromBody] RoleDTO roleDTO)
         {
-            if (roleDTO == null)
-            {
-                return BadRequest("role ID mismatch or null role.");
-            }
             var updatedRole = await _roleService.UpdateRoleAsync(id, roleDTO);
             if (updatedRole == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Role {id} not found");
             }
             return Ok(updatedRole);
         }
@@ -64,7 +61,7 @@ namespace ExamOnline.Controllers
             var result = await _roleService.DeleteRoleAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"Role {id} not found");
             }
             return NoContent();
         }

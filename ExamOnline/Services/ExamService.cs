@@ -2,6 +2,7 @@
 using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
+using ExceptionHandleDemo.Exceptions;
 
 namespace ExamOnline.Services
 {
@@ -24,12 +25,12 @@ namespace ExamOnline.Services
             var existingCategory = await _categoryRepository.GetByIdAsync(examDTO.CategoryId);
             if (existingCategory == null)
             {
-                throw new ArgumentException($"Category with ID {examDTO.CategoryId} does not exist.");
+                throw new BadRequestException($"Category with ID {examDTO.CategoryId} does not exist.");
             }
             var existingLevel = await _levelRepository.GetByIdAsync(examDTO.LevelId);
             if (existingLevel == null)
             {
-                throw new ArgumentException($"Level with ID {examDTO.LevelId} does not exist.");
+                throw new BadRequestException($"Level with ID {examDTO.LevelId} does not exist.");
             }
             var exam = _mapper.Map<Exam>(examDTO);
             var createdExam = await _examRepository.CreateAsync(exam);
@@ -61,12 +62,12 @@ namespace ExamOnline.Services
             var existingCategory = await _categoryRepository.GetByIdAsync(examDTO.CategoryId);
             if (existingCategory == null)
             {
-                throw new ArgumentException($"Category with ID {examDTO.CategoryId} does not exist.");
+                throw new BadRequestException($"Category with ID {examDTO.CategoryId} does not exist.");
             }
             var existingLevel = await _levelRepository.GetByIdAsync(examDTO.LevelId);
             if (existingLevel == null)
             {
-                throw new ArgumentException($"Level with ID {examDTO.LevelId} does not exist.");
+                throw new BadRequestException($"Level with ID {examDTO.LevelId} does not exist.");
             }
             var existingExam = await _examRepository.GetByIdAsync(id);
             if (existingExam == null)

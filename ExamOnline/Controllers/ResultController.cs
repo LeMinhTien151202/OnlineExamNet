@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IResult;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace ExamOnline.Controllers
             var result = await _resultService.GetResultByIdAsync(id);
             if (result == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Result {id} not found");
             }
             return Ok(result);
         }
@@ -35,10 +36,6 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "user")]
         public async Task<IActionResult> CreateResult([FromBody] ResultDTO resultDTO)
         {
-            if (resultDTO == null)
-            {
-                return BadRequest("Result cannot be null.");
-            }
             var createdResult = await _resultService.CreateResultAsync(resultDTO);
             return Ok(createdResult);
         }
@@ -46,14 +43,10 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateResult(int id, [FromBody] ResultDTO resultDTO)
         {
-            if (resultDTO == null)
-            {
-                return BadRequest("Result ID mismatch or null result.");
-            }
             var updatedResult = await _resultService.UpdateResultAsync(id, resultDTO);
             if (updatedResult == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Result {id} not found");
             }
             return Ok(updatedResult);
         }
@@ -64,7 +57,7 @@ namespace ExamOnline.Controllers
             var result = await _resultService.DeleteResultAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"Result {id} not found");
             }
             return NoContent();
         }

@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ILevel;
 using ExamOnline.Services;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace ExamOnline.Controllers
             var level = await levelService.GetLevelByIdAsync(id);
             if (level == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Level {id} not found");
             }
             return Ok(level);
         }
@@ -37,7 +38,7 @@ namespace ExamOnline.Controllers
         {
             if (levelDTO == null)
             {
-                return BadRequest("Level cannot be null.");
+                throw new BadRequestException("Invalid level data");
             }
             var createdLevel = await levelService.CreateLevelAsync(levelDTO);
             return Ok(createdLevel);
@@ -46,14 +47,10 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateLevel(int id, [FromBody] LevelDTO levelDTO)
         {
-            if (levelDTO == null)
-            {
-                return BadRequest("Level ID mismatch or null level.");
-            }
             var updatedLevel = await levelService.UpdateLevelAsync(id, levelDTO);
             if (updatedLevel == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Level {id} not found");
             }
             return Ok(updatedLevel);
         }
@@ -64,7 +61,7 @@ namespace ExamOnline.Controllers
             var result = await levelService.DeleteLevelAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"Level {id} not found");
             }
             return NoContent();
         }

@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace ExamOnline.Controllers
             var exam = await _examService.GetExamByIdAsync(id);
             if (exam == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Exam {id} not found");
             }
             return Ok(exam);
         }
@@ -35,10 +36,6 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> CreateExam([FromBody] ExamDTO examDTO)
         {
-            if (examDTO == null)
-            {
-                return BadRequest("exam cannot be null.");
-            }
             var createdExam = await _examService.CreateExamAsync(examDTO);
             return Ok(examDTO);
         }
@@ -46,14 +43,10 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> UpdateExam(int id, [FromBody] ExamDTO examDTO)
         {
-            if (examDTO == null)
-            {
-                return BadRequest("exam ID mismatch or null exam.");
-            }
             var updatedExam = await _examService.UpdateExamAsync(id, examDTO);
             if (updatedExam == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Exam {id} not found");
             }
             return Ok(updatedExam);
         }
@@ -64,7 +57,7 @@ namespace ExamOnline.Controllers
             var result = await _examService.DeleteExamAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"Category {id} not found");
             }
             return NoContent();
         }

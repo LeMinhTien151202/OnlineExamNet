@@ -1,5 +1,6 @@
 ﻿using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IQuestion;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace ExamOnline.Controllers
             var question = await _questionService.GetQuestionByIdAsync(id);
             if (question == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Question {id} not found");
             }
             return Ok(question);
         }
@@ -37,7 +38,7 @@ namespace ExamOnline.Controllers
         {
             if (questionDTO == null)
             {
-                return BadRequest("question cannot be null.");
+                throw new BadRequestException("Question cannot be null");
             }
             var createdQuestion = await _questionService.CreateQuestionAsync(questionDTO);
             return Ok(createdQuestion);
@@ -46,14 +47,10 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "teacher")]
         public async Task<IActionResult> UpdateQuestion(int id, [FromBody] QuestionDTO questionDTO)
         {
-            if (questionDTO == null)
-            {
-                return BadRequest("Question ID mismatch or null question.");
-            }
             var updatedQuestion = await _questionService.UpdateQuestionAsync(id, questionDTO);
             if (updatedQuestion == null)
             {
-                return NotFound();
+                throw new NotFoundException($"Question {id} not found");
             }
             return Ok(updatedQuestion);
         }
@@ -64,7 +61,7 @@ namespace ExamOnline.Controllers
             var result = await _questionService.DeleteQuestionAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"Question {id} not found");
             }
             return NoContent();
         }

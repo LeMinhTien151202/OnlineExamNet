@@ -2,6 +2,7 @@
 using ExamOnline.Interfaces.IRole;
 using ExamOnline.Interfaces.IToken;
 using ExamOnline.Interfaces.IUser;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamOnline.Services
@@ -59,11 +60,11 @@ namespace ExamOnline.Services
             var role = await _roleRepository.GetByIdAsync(registerDTO.RoleId);
             if (role == null)
             {
-                return "Role does not exist.";
+                throw new BadRequestException("Role does not exist.");
             }
             if (await _context.Users.AnyAsync(u => u.UserName == registerDTO.UserName))
             {
-                return "User name already exists.";
+                throw new BadRequestException("User name already exists.");
             }
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.PassWord);
             var user = new User
@@ -84,7 +85,7 @@ namespace ExamOnline.Services
             var role = await _roleRepository.GetByIdAsync(registerDTO.RoleId);
             if (role == null)
             {
-                throw new ArgumentException($"Role with ID {registerDTO.RoleId} does not exist.");
+                throw new BadRequestException($"Role with ID {registerDTO.RoleId} does not exist.");
             }
             var existingUser = await _userRepository.GetByIdAsync(id);
             if (existingUser == null)
