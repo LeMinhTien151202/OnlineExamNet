@@ -1,6 +1,6 @@
-﻿using ExamOnline.Interfaces.IUser;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using ExamOnline.Exceptions;
+using ExamOnline.Interfaces.IUser;
+using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamOnline.Controllers
@@ -28,7 +28,7 @@ namespace ExamOnline.Controllers
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                throw new NotFoundException($"User {id} not found");
             }
             return Ok(user);
         }
@@ -37,7 +37,7 @@ namespace ExamOnline.Controllers
         {
             if (registerDTO.PassWord != registerDTO.ReTypePassWord)
             {
-                return BadRequest("Password isn't equals.");
+                throw new BadRequestException("Password isn't equals.");
             }
             var createdUser = await _userService.RegisterAsync(registerDTO);
             return Ok(createdUser);
@@ -49,7 +49,7 @@ namespace ExamOnline.Controllers
             var token = await _userService.LoginAsync(loginDTO);
 
             if (token == null)
-                return Unauthorized("Invalid username or password.");
+                throw new UnauthorizedException("username or password not match");
 
             return Ok(new
             {
@@ -61,14 +61,10 @@ namespace ExamOnline.Controllers
         //[Authorize(Roles = "user, teacher, admin")]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] RegisterDTO registerDTO)
         {
-            if (registerDTO == null)
-            {
-                return BadRequest("User ID mismatch or null user.");
-            }
             var updatedUser = await _userService.UpdateUserAsync(id, registerDTO);
             if (updatedUser == null)
             {
-                return NotFound();
+                throw new NotFoundException($"User {id} not found");
             }
             return Ok(updatedUser);
         }
@@ -79,7 +75,7 @@ namespace ExamOnline.Controllers
             var result = await _userService.DeleteUserAsync(id);
             if (!result)
             {
-                return NotFound();
+                throw new NotFoundException($"User {id} not found");
             }
             return NoContent();
         }

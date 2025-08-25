@@ -7,8 +7,8 @@
         [Required, Range(1, int.MaxValue, ErrorMessage = "LevelId must be a positive integer.")]
         public int LevelId { get; set; }
         [Required, MinLength(1), MaxLength(100)]
-        public string ExamName { get; set; }
+        public string? ExamName { get; set; }
         [Required, MinLength(1), MaxLength(100)]
-        public string Pictures { get; set; }
+        public IFormFile? Pictures { get; set; }
     }
 }

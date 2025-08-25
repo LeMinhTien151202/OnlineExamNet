@@ -23,6 +23,7 @@ namespace ExamOnline.Controllers
             return Ok(levels);
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetLevelById(int id)
         {
             var level = await levelService.GetLevelByIdAsync(id);

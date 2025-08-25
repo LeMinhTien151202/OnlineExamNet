@@ -34,7 +34,7 @@ namespace ExamOnline.Controllers
         }
         [HttpPost]
         //[Authorize(Roles = "teacher")]
-        public async Task<IActionResult> CreateExam([FromBody] ExamDTO examDTO)
+        public async Task<IActionResult> CreateExam([FromForm] ExamDTO examDTO)
         {
             var createdExam = await _examService.CreateExamAsync(examDTO);
             return Ok(examDTO);
