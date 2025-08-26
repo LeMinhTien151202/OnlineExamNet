@@ -7,33 +7,33 @@ namespace ExamOnline.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
-        public RoleService(IRoleRepository roleRepository, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        public RoleService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _roleRepository = roleRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Role?> CreateRoleAsync(RoleDTO roleDTO)
         {
             var role = _mapper.Map<Role>(roleDTO);
-            var createdRole = await _roleRepository.CreateAsync(role);
+            var createdRole = await _unitOfWork.Roles.CreateAsync(role);
             return role;
         }
 
         public async Task<bool> DeleteRoleAsync(int id)
         {
-            return await _roleRepository.DeleteAsync(id);
+            return await _unitOfWork.Roles.DeleteAsync(id);
         }
 
         public async Task<IEnumerable<Role>> GetAllRolesAsync()
         {
-            return await _roleRepository.GetAllAsync();
+            return await _unitOfWork.Roles.GetAllAsync();
         }
 
         public async Task<Role?> GetRoleByIdAsync(int id)
         {
-            return await _roleRepository.GetByIdAsync(id);
+            return await _unitOfWork.Roles.GetByIdAsync(id);
         }
 
         public Task<Role?> GetRoleByNameAsync(string name)
@@ -43,13 +43,13 @@ namespace ExamOnline.Services
 
         public async Task<Role?> UpdateRoleAsync(int id, RoleDTO roleDTO)
         {
-            var existingRole = await _roleRepository.GetByIdAsync(id);
+            var existingRole = await _unitOfWork.Roles.GetByIdAsync(id);
             if (existingRole == null)
             {
                 return null;
             }
             _mapper.Map(roleDTO, existingRole);
-            var updatedLevel = await _roleRepository.UpdateAsync(existingRole);
+            var updatedLevel = await _unitOfWork.Roles.UpdateAsync(existingRole);
             return updatedLevel;
         }
     }

@@ -8,12 +8,13 @@ using ExamOnline.Interfaces.IUser;
 
 public interface IUnitOfWork : IDisposable
 {
-    ICategoryRepository Categories { get; }
-    ILevelRepository Levels { get; }
-    IExamRepository Exams { get; }
-    IRoleRepository Roles { get; }
-    IQuestionRepository Questions { get; }
-    IResultRepository Results { get; }
-    IUserRepository Users { get; }
+    public IGenericRepository<Category> Categories { get; }
+    public IGenericRepository<Level> Levels { get; }
+    public IGenericRepository<Exam> Exams { get; }
+    public IGenericRepository<Role> Roles { get; }
+    public IGenericRepository<Question> Questions { get; }
+    public IGenericRepository<Result> Results { get; }
+    public IGenericRepository<User> Users { get; }
+
     Task<int> SaveAsync();
 }

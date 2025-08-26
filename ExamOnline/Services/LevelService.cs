@@ -7,36 +7,36 @@ namespace ExamOnline.Services
 {
     public class LevelService : ILevelService
     {
-        private readonly ILevelRepository _levelRepository;
         private readonly IMapper _mapper;
-        public LevelService(ILevelRepository levelRepository, IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+        public LevelService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _levelRepository = levelRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Level?> CreateLevelAsync(LevelDTO levelDTO)
         {
             var level = _mapper.Map<Level>(levelDTO);
-            var createdLevel = await _levelRepository.CreateAsync(level);
+            var createdLevel = await _unitOfWork.Levels.CreateAsync(level);
             return createdLevel;
         }
 
         public async Task<bool> DeleteLevelAsync(int id)
         {
-            var isDeleted = await _levelRepository.DeleteAsync(id);
+            var isDeleted = await _unitOfWork.Levels.DeleteAsync(id);
             return isDeleted;
         }
 
         public async Task<IEnumerable<Level>> GetAllLevelAsync()
         {
-            var levels = await _levelRepository.GetAllAsync();
+            var levels = await _unitOfWork.Levels.GetAllAsync();
             return levels;
         }
 
         public async Task<Level?> GetLevelByIdAsync(int id)
         {
-            var level = await _levelRepository.GetByIdAsync(id);
+            var level = await _unitOfWork.Levels.GetByIdAsync(id);
             if (level == null)
             {
                 return null;
@@ -51,13 +51,13 @@ namespace ExamOnline.Services
 
         public async Task<Level?> UpdateLevelAsync(int id, LevelDTO levelDTO)
         {
-            var existingLevel = await _levelRepository.GetByIdAsync(id);
+            var existingLevel = await _unitOfWork.Levels.GetByIdAsync(id);
             if (existingLevel == null) 
             {
                 return null;
             }
             _mapper.Map(levelDTO, existingLevel);
-            var updatedLevel = await _levelRepository.UpdateAsync(existingLevel);
+            var updatedLevel = await _unitOfWork.Levels.UpdateAsync(existingLevel);
             return updatedLevel;
 
         }

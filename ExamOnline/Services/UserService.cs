@@ -9,34 +9,30 @@ namespace ExamOnline.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
         private readonly ExamOnlineContext _context;
         private readonly ITokenService _tokenService;
-        private readonly IRoleRepository _roleRepository;
-        public UserService(IUserRepository userRepository, IMapper mapper, ExamOnlineContext context
-            , ITokenService tokenService, IRoleRepository roleRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public UserService(IMapper mapper, ExamOnlineContext context
+            , ITokenService tokenService, IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
-            _mapper = mapper;
             _context = context;
             _tokenService = tokenService;
-            _roleRepository = roleRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            return await _userRepository.DeleteAsync(id);
+            return await _unitOfWork.Users.DeleteAsync(id);
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _userRepository.GetAllAsync();
+            return await _unitOfWork.Users.GetAllAsync();
         }
 
         public async Task<User?> GetUserByIdAsync(int id)
         {
-            return await _userRepository.GetByIdAsync(id);
+            return await _unitOfWork.Users.GetByIdAsync(id);
         }
 
         public async Task<string?> LoginAsync(LoginDTO loginDTO)
@@ -57,7 +53,7 @@ namespace ExamOnline.Services
 
         public async Task<string?> RegisterAsync(RegisterDTO registerDTO)
         {
-            var role = await _roleRepository.GetByIdAsync(registerDTO.RoleId);
+            var role = await _unitOfWork.Roles.GetByIdAsync(registerDTO.RoleId);
             if (role == null)
             {
                 throw new BadRequestException("Role does not exist.");
@@ -75,19 +71,19 @@ namespace ExamOnline.Services
                 Email = registerDTO.Email,
                 RoleId = registerDTO.RoleId
             };
-            var createdUser = await _userRepository.CreateAsync(user);
+            var createdUser = await _unitOfWork.Users.CreateAsync(user);
             await _context.SaveChangesAsync();
             return "User created successfully.";
         }
 
         public async Task<User?> UpdateUserAsync(int id, RegisterDTO registerDTO)
         {
-            var role = await _roleRepository.GetByIdAsync(registerDTO.RoleId);
+            var role = await _unitOfWork.Roles.GetByIdAsync(registerDTO.RoleId);
             if (role == null)
             {
                 throw new BadRequestException($"Role with ID {registerDTO.RoleId} does not exist.");
             }
-            var existingUser = await _userRepository.GetByIdAsync(id);
+            var existingUser = await _unitOfWork.Users.GetByIdAsync(id);
             if (existingUser == null)
             {
                 return null; // User not found
@@ -101,7 +97,7 @@ namespace ExamOnline.Services
             existingUser.Email = registerDTO.Email;
             existingUser.RoleId = registerDTO.RoleId;
             
-            var updatedUser = await _userRepository.UpdateAsync(existingUser);
+            var updatedUser = await _unitOfWork.Users.UpdateAsync(existingUser);
             return updatedUser;
         }
     }

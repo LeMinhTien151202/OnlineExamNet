@@ -5,13 +5,11 @@ namespace ExamOnline.Services
 {
     public class CategoryService : ICategoryService
     {
-        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public CategoryService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _categoryRepository = categoryRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
