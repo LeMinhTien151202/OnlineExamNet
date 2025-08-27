@@ -1,5 +1,4 @@
-using ExamOnline.Data;
-using ExamOnline.Exceptions.Handles;
+﻿using ExamOnline.Data;
 using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
@@ -8,9 +7,9 @@ using ExamOnline.Interfaces.IResult;
 using ExamOnline.Interfaces.IRole;
 using ExamOnline.Interfaces.IToken;
 using ExamOnline.Interfaces.IUser;
+using ExamOnline.Middlewares;
 using ExamOnline.Repositories;
 using ExamOnline.Services;
-using ExceptionHandleDemo.Exceptions.Handles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -65,7 +64,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // Th�m c?u h�nh JWT
+    // Thêm c?u hình JWT
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -73,7 +72,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Nhap JWT token v�o d�y (v� du: Bearer eyJhbGciOi...)"
+        Description = "Nhap JWT token vào dây (ví du: Bearer eyJhbGciOi...)"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -91,13 +90,12 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
-builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
-builder.Services.AddExceptionHandler<UnauthorizedExceptionHandler>();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
 
 var app = builder.Build();
+// dùng middleware global cho toàn dự án
+app.UseGlobalExceptionHandler();
+// Middleware xử lý exception
+app.UseMiddleware<ExamOnline.Middlewares.ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -109,7 +107,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseExceptionHandler();
 app.MapControllers();
 
 app.Run();

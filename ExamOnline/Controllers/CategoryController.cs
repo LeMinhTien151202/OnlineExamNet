@@ -1,5 +1,5 @@
-﻿using ExamOnline.Interfaces.ICategory;
-using ExceptionHandleDemo.Exceptions;
+﻿using ExamOnline.Exceptions;
+using ExamOnline.Interfaces.ICategory;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,8 +1,8 @@
 ﻿using ExamOnline.Dtos;
+using ExamOnline.Exceptions;
 using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
-using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +32,7 @@ namespace ExamOnline.Services
                 throw new BadRequestException($"Level with ID {examDTO.LevelId} does not exist.");
             }
 
-            var exam = await UploadPictures(examDTO);
+            var exam = await CreatedPictures(examDTO);
             if (exam == null)
             {
                 throw new BadRequestException("Failed to upload picture.");
@@ -41,7 +41,7 @@ namespace ExamOnline.Services
             return createdExam;
         }
 
-        public async Task<Exam?> UploadPictures(ExamDTO examDTO)
+        public async Task<Exam?> CreatedPictures(ExamDTO examDTO)
         {
             if (examDTO.Pictures == null || examDTO.Pictures.Length == 0)
             {
@@ -72,6 +72,53 @@ namespace ExamOnline.Services
                 ExamName = examDTO.ExamName,
                 Pictures = $"/images/{uniqueFileName}"
             };
+            return exam;
+        }
+
+        public async Task<Exam?> UploadPictures(int id, ExamDTO examDTO)
+        {
+            var exam = await _unitOfWork.Exams.GetByIdAsync(id);
+            if (exam == null)
+            {
+                throw new NotFoundException($"Exam with ID {id} does not exist.");
+            }
+
+            // Cập nhật các trường. Vì dùng PUT, bạn cần đảm bảo tất cả các trường đều được gửi.
+            // Nếu một trường không được gửi (null), nó sẽ ghi đè giá trị cũ.
+            // Để giữ lại giá trị cũ, bạn phải kiểm tra null trước khi gán.
+            // Hoặc gửi lại giá trị cũ từ client
+
+            // Ví dụ: cập nhật Title
+            exam.CategoryId = examDTO.CategoryId;
+            examDTO.LevelId = examDTO.LevelId;
+            exam.ExamName = examDTO.ExamName;
+
+            // Xử lý ảnh
+            if (examDTO.Pictures != null)
+            {
+                // 1. Xóa ảnh cũ
+                if (!string.IsNullOrEmpty(exam.Pictures))
+                {
+                    var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, exam.Pictures.TrimStart('/'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                // 2. Lưu ảnh mới
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                string uniqueFileName = Guid.NewGuid().ToString() + "_" + examDTO.Pictures.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await examDTO.Pictures.CopyToAsync(fileStream);
+                }
+
+                // 3. Cập nhật đường dẫn ảnh mới vào model
+                exam.Pictures = $"/images/{uniqueFileName}";
+            }
             return exam;
         }
 
@@ -112,8 +159,9 @@ namespace ExamOnline.Services
             {
                 return null;
             }
-            _mapper.Map(examDTO, existingExam);
-            var updatedExam = await _unitOfWork.Exams.UpdateAsync(existingExam);
+            //_mapper.Map(examDTO, existingExam);
+            var exam = await UploadPictures(id, examDTO);
+            var updatedExam = await _unitOfWork.Exams.UpdateAsync(exam);
             return updatedExam;
         }
     }

@@ -1,6 +1,6 @@
-﻿using ExamOnline.Interfaces.ICategory;
+﻿using ExamOnline.Exceptions;
+using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
-using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace ExamOnline.Controllers
         }
         [HttpPut("{id}")]
         //[Authorize(Roles = "teacher")]
-        public async Task<IActionResult> UpdateExam(int id, [FromBody] ExamDTO examDTO)
+        public async Task<IActionResult> UpdateExam(int id, [FromForm] ExamDTO examDTO)
         {
             var updatedExam = await _examService.UpdateExamAsync(id, examDTO);
             if (updatedExam == null)

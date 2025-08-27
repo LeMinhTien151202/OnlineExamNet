@@ -1,6 +1,6 @@
-﻿using ExamOnline.Interfaces.IExam;
+﻿using ExamOnline.Exceptions;
+using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.IRole;
-using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,7 +1,7 @@
 ﻿using ExamOnline.Exceptions;
 using ExamOnline.Interfaces.IUser;
-using ExceptionHandleDemo.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using ExamOnline.Exceptions;
 
 namespace ExamOnline.Controllers
 {
@@ -28,7 +28,7 @@ namespace ExamOnline.Controllers
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
-                throw new NotFoundException($"User {id} not found");
+                throw new Exceptions.NotFoundException($"User {id} not found");
             }
             return Ok(user);
         }
@@ -37,7 +37,7 @@ namespace ExamOnline.Controllers
         {
             if (registerDTO.PassWord != registerDTO.ReTypePassWord)
             {
-                throw new BadRequestException("Password isn't equals.");
+                throw new Exceptions.BadRequestException("Password isn't equals.");
             }
             var createdUser = await _userService.RegisterAsync(registerDTO);
             return Ok(createdUser);
@@ -49,7 +49,7 @@ namespace ExamOnline.Controllers
             var token = await _userService.LoginAsync(loginDTO);
 
             if (token == null)
-                throw new UnauthorizedException("username or password not match");
+                throw new Exceptions.UnauthorizedException("username or password not match");
 
             return Ok(new
             {
@@ -64,7 +64,7 @@ namespace ExamOnline.Controllers
             var updatedUser = await _userService.UpdateUserAsync(id, registerDTO);
             if (updatedUser == null)
             {
-                throw new NotFoundException($"User {id} not found");
+                throw new Exceptions.NotFoundException($"User {id} not found");
             }
             return Ok(updatedUser);
         }
@@ -75,7 +75,7 @@ namespace ExamOnline.Controllers
             var result = await _userService.DeleteUserAsync(id);
             if (!result)
             {
-                throw new NotFoundException($"User {id} not found");
+                throw new Exceptions.NotFoundException($"User {id} not found");
             }
             return NoContent();
         }
