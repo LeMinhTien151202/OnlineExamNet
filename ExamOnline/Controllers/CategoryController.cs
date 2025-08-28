@@ -40,7 +40,7 @@ namespace ExamOnline.Controllers
                 throw new BadRequestException("Invalid category data");
             }
             var createdCategory = await categoryService.CreateCategoryAsync(categoryDTO);
-            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.CategoryId }, createdCategory);
+            return Ok(createdCategory);
         }
         [HttpPut("{id}")]
         //[Authorize(Roles = "admin")]

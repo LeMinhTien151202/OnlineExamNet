@@ -3,7 +3,7 @@ using ExamOnline.Exceptions;
 using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting; // Ensure this using directive is present
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamOnline.Services
@@ -161,6 +161,10 @@ namespace ExamOnline.Services
             }
             //_mapper.Map(examDTO, existingExam);
             var exam = await UploadPictures(id, examDTO);
+            if(exam == null)
+            {
+                throw new BadRequestException("Failed to upload picture.");
+            }
             var updatedExam = await _unitOfWork.Exams.UpdateAsync(exam);
             return updatedExam;
         }

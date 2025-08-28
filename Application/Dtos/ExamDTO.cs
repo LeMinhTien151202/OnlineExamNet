@@ -1,4 +1,6 @@
-﻿namespace ExamOnline.Dtos
+﻿using Microsoft.AspNetCore.Http;
+
+namespace ExamOnline.Dtos
 {
     public class ExamDTO
     {
