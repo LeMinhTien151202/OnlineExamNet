@@ -19,18 +19,26 @@ namespace ExamOnline.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {
-            var roles = await _roleService.GetAllRolesAsync();
-            return Ok(roles);
+            var roles = await _roleService.GetAllRoleAsync();
+           var roleDTOs = roles.Select(role => new RoleDTO
+            {
+                RoleName = role.Name
+            }).ToList();
+            return Ok(roleDTOs);
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetRoleById(int id)
+        public async Task<IActionResult> GetRoleById(string id)
         {
-            var role = await _roleService.GetRoleByIdAsync(id);
+            var role = await _roleService.GetByRoleIdAsync(id);
             if (role == null)
             {
                 throw new NotFoundException($"Role {id} not found");
             }
-            return Ok(role);
+            RoleDTO result = new RoleDTO
+            {
+                RoleName = role.Name
+            };
+            return Ok(result);
         }
         [HttpPost]
         //[Authorize(Roles = "admin")]
@@ -45,7 +53,7 @@ namespace ExamOnline.Controllers
         }
         [HttpPut("{id}")]
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateRole(int id, [FromBody] RoleDTO roleDTO)
+        public async Task<IActionResult> UpdateRole(string id, [FromBody] RoleDTO roleDTO)
         {
             var updatedRole = await _roleService.UpdateRoleAsync(id, roleDTO);
             if (updatedRole == null)
@@ -56,10 +64,10 @@ namespace ExamOnline.Controllers
         }
         [HttpDelete("{id}")]
         //[Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteRole(int id)
+        public async Task<IActionResult> DeleteRole(string id)
         {
             var result = await _roleService.DeleteRoleAsync(id);
-            if (!result)
+            if (result==null)
             {
                 throw new NotFoundException($"Role {id} not found");
             }

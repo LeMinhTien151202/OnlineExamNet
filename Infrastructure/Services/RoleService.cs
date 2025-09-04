@@ -1,7 +1,9 @@
 ﻿using ExamOnline.Dtos;
+using ExamOnline.Exceptions;
 using ExamOnline.Interfaces.ILevel;
 using ExamOnline.Interfaces.IRole;
 using ExamOnline.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExamOnline.Services
 {
@@ -9,48 +11,49 @@ namespace ExamOnline.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        public RoleService(IMapper mapper, IUnitOfWork unitOfWork)
+        private readonly IRoleRepository _roleRepository;
+        public RoleService(IMapper mapper, IUnitOfWork unitOfWork, IRoleRepository roleRepository)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-        }
-        public async Task<Role?> CreateRoleAsync(RoleDTO roleDTO)
-        {
-            var role = _mapper.Map<Role>(roleDTO);
-            var createdRole = await _unitOfWork.Roles.CreateAsync(role);
-            return role;
+            _roleRepository = roleRepository;
         }
 
-        public async Task<bool> DeleteRoleAsync(int id)
+        public async Task<IdentityResult> CreateRoleAsync(RoleDTO roleDTO)
         {
-            return await _unitOfWork.Roles.DeleteAsync(id);
+            if (roleDTO == null || string.IsNullOrWhiteSpace(roleDTO.RoleName))
+                throw new BadRequestException("Invalid role data.");
+            var role = new IdentityRole(roleDTO.RoleName);
+            return await _roleRepository.CreateAsync(role);
         }
 
-        public async Task<IEnumerable<Role>> GetAllRolesAsync()
+        public async Task<IdentityResult> DeleteRoleAsync(string id)
         {
-            return await _unitOfWork.Roles.GetAllAsync();
+            var role = await _roleRepository.GetByIdAsync(id);
+            if (role == null)
+                throw new NotFoundException("Role does not exist.");
+
+            return await _roleRepository.DeleteAsync(role);
         }
 
-        public async Task<Role?> GetRoleByIdAsync(int id)
+        public async Task<IEnumerable<IdentityRole>> GetAllRoleAsync()
         {
-            return await _unitOfWork.Roles.GetByIdAsync(id);
+            return await _roleRepository.GetAllAsync();
         }
 
-        public Task<Role?> GetRoleByNameAsync(string name)
+        public async Task<IdentityRole?> GetByRoleIdAsync(string id)
         {
-            throw new NotImplementedException();
+            return await _roleRepository.GetByIdAsync(id);
         }
 
-        public async Task<Role?> UpdateRoleAsync(int id, RoleDTO roleDTO)
+        public async Task<IdentityResult> UpdateRoleAsync(string id, RoleDTO roleDTO)
         {
-            var existingRole = await _unitOfWork.Roles.GetByIdAsync(id);
-            if (existingRole == null)
-            {
-                return null;
-            }
-            _mapper.Map(roleDTO, existingRole);
-            var updatedLevel = await _unitOfWork.Roles.UpdateAsync(existingRole);
-            return updatedLevel;
+            var role = await _roleRepository.GetByIdAsync(id);
+            if (role == null)
+                throw new NotFoundException("Role does not exist.");
+
+            role.Name = roleDTO.RoleName;
+            return await _roleRepository.UpdateAsync(role);
         }
     }
 }

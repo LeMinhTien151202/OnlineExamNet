@@ -1,12 +1,13 @@
-﻿namespace ExamOnline.Interfaces.IRole
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ExamOnline.Interfaces.IRole
 {
     public interface IRoleService
     {
-        Task<IEnumerable<Role>> GetAllRolesAsync();
-        Task<Role?> GetRoleByIdAsync(int id);
-        Task<Role?> CreateRoleAsync(RoleDTO roleDTO);
-        Task<Role?> UpdateRoleAsync(int id, RoleDTO roleDTO);
-        Task<bool> DeleteRoleAsync(int id);
-        Task<Role?> GetRoleByNameAsync(string name);
+        Task<IEnumerable<IdentityRole>> GetAllRoleAsync();
+        Task<IdentityRole?> GetByRoleIdAsync(string id);
+        Task<IdentityResult> CreateRoleAsync(RoleDTO roleDTO);
+        Task<IdentityResult> UpdateRoleAsync(string id, RoleDTO roleDTO);
+        Task<IdentityResult> DeleteRoleAsync(string id);
     }
 }

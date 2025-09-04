@@ -1,13 +1,13 @@
-﻿
+﻿using Domain.Entities;
 using ExamOnline.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamOnline.Data
 {
-    public class ExamOnlineContext : DbContext
+    public class ExamOnlineContext : IdentityDbContext<ApplicationUser>
     {
-        public ExamOnlineContext(DbContextOptions<ExamOnlineContext> options)
-            : base(options)
+        public ExamOnlineContext(DbContextOptions<ExamOnlineContext> options) : base(options)
         {
         }
         public DbSet<Category> Categories { get; set; }
@@ -15,8 +15,6 @@ namespace ExamOnline.Data
         public DbSet<Level> Levels { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Result> Results { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<User> Users { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

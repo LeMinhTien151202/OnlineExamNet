@@ -1,12 +1,15 @@
-﻿namespace ExamOnline.Interfaces.IUser
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ExamOnline.Interfaces.IUser
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User?> GetUserByIdAsync(int id);
-        Task<string?> RegisterAsync(RegisterDTO registerDTO);
-        Task<string?> LoginAsync(LoginDTO loginDTO);
-        Task<User?> UpdateUserAsync(int id, RegisterDTO registerDTO);
-        Task<bool> DeleteUserAsync(int id);
+        Task<IdentityResult> RegisterAsync(RegisterDTO dto);
+        Task<string?> LoginAsync(LoginDTO dto);
+
+        Task<List<IdentityUser>> GetAllAsync();
+        Task<IdentityUser?> GetByNameAsync(string username);
+        Task<IdentityResult> UpdateAsync(RegisterDTO dto);
+        Task<IdentityResult> DeleteAsync(string id);
     }
 }

@@ -9,7 +9,7 @@ namespace ExamOnline.Models
         public int ResultId { get; set; }
 
         [Column("user_id")]
-        public int? UserId { get; set; }
+        public string? UserId { get; set; }
 
         [Column("exam_id")]
         public int? ExamId { get; set; }
@@ -19,8 +19,8 @@ namespace ExamOnline.Models
         public string? Score { get; set; }
 
         // Navigation properties
-        [ForeignKey("UserId")]
-        public virtual User? User { get; set; }
+        //[ForeignKey("UserId")]
+        //public virtual User? User { get; set; }
 
         [ForeignKey("ExamId")]
         public virtual Exam? Exam { get; set; }

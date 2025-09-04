@@ -1,21 +1,47 @@
 ﻿
 using ExamOnline.Interfaces.IRole;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamOnline.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly ExamOnlineContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RoleRepository(ExamOnlineContext context)
+        public RoleRepository(RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _roleManager = roleManager;
         }
 
-        public Task<Role?> GetRoleByNameAsync(string name)
+        public async Task<IdentityResult> CreateAsync(IdentityRole entity)
         {
-            throw new NotImplementedException();
+            return await _roleManager.CreateAsync(entity);
         }
+
+        public async Task<IdentityResult> DeleteAsync(IdentityRole entity)
+        {
+            return await _roleManager.DeleteAsync(entity);
+        }
+
+        public async Task<IEnumerable<IdentityRole>> GetAllAsync()
+        {
+            return await _roleManager.Roles.ToListAsync();
+        }
+
+        public async Task<IdentityRole?> GetByIdAsync(string id)
+        {
+            return await _roleManager.FindByIdAsync(id);
+        }
+
+        public async Task<IdentityResult> UpdateAsync(IdentityRole entity)
+        {
+            return await _roleManager.UpdateAsync(entity);
+        }
+
+        //public Task<Role?> GetRoleByNameAsync(string name)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

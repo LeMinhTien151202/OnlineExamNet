@@ -11,6 +11,7 @@ using ExamOnline.Middlewares;
 using ExamOnline.Repositories;
 using ExamOnline.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -18,7 +19,17 @@ using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    // Bạn có thể cấu hình các tùy chọn về mật khẩu, khóa tài khoản, v.v. tại đây
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+})
+.AddEntityFrameworkStores<ExamOnlineContext>()
+.AddDefaultTokenProviders();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ExamOnlineContext>(options =>

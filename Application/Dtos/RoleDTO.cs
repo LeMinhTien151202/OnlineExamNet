@@ -1,4 +1,5 @@
-﻿namespace ExamOnline.Dtos
+﻿
+namespace ExamOnline.Dtos
 {
     public class RoleDTO
     {

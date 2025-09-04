@@ -22,11 +22,11 @@ namespace ExamOnline.Services
             {
                 throw new BadRequestException($"Exam with ID {resultDTO.ExamId} does not exist.");
             }
-            var existingUser = await _unitOfWork.Users.GetByIdAsync(resultDTO.UserId);
-            if (existingUser == null)
-            {
-                throw new BadRequestException($"User with ID {resultDTO.UserId} does not exist.");
-            }
+            //var existingUser = await _unitOfWork.Users.GetByIdAsync(resultDTO.UserId);
+            //if (existingUser == null)
+            //{
+            //    throw new BadRequestException($"User with ID {resultDTO.UserId} does not exist.");
+            //}
             var result = _mapper.Map<Result>(resultDTO);
             var createdResult = await _unitOfWork.Results.CreateAsync(result);
             return createdResult;
@@ -53,11 +53,11 @@ namespace ExamOnline.Services
             {
                 throw new BadRequestException($"Exam with ID {resultDTO.ExamId} does not exist.");
             }
-            var existingUser = await _unitOfWork.Users.GetByIdAsync(resultDTO.UserId);
-            if (existingUser == null)
-            {
-                throw new BadRequestException($"User with ID {resultDTO.UserId} does not exist.");
-            }
+            //var existingUser = await _unitOfWork.Users.GetByIdAsync(resultDTO.UserId);
+            //if (existingUser == null)
+            //{
+            //    throw new BadRequestException($"User with ID {resultDTO.UserId} does not exist.");
+            //}
             var existingResult = await _unitOfWork.Results.GetByIdAsync(id);
             if (existingResult == null)
             {

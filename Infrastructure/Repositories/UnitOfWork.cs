@@ -13,10 +13,10 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<Category> Categories { get; }
     public IGenericRepository<Level> Levels { get; }
     public IGenericRepository<Exam> Exams { get; }
-    public IGenericRepository<Role> Roles { get; }
+    //public IGenericRepository<Role> Roles { get; }
     public IGenericRepository<Question> Questions { get; }
     public IGenericRepository<Result> Results { get; }
-    public IGenericRepository<User> Users { get; }
+    //public IGenericRepository<User> Users { get; }
 
     public UnitOfWork(ExamOnlineContext context)
     {
@@ -24,10 +24,10 @@ public class UnitOfWork : IUnitOfWork
         Categories = new GenericRepository<Category>(_context);
         Levels = new GenericRepository<Level>(_context);
         Exams = new GenericRepository<Exam>(_context);
-        Roles = new GenericRepository<Role>(_context);
+        //Roles = new GenericRepository<Role>(_context);
         Questions = new GenericRepository<Question>(_context);
         Results = new GenericRepository<Result>(_context);
-        Users = new GenericRepository<User>(_context);
+        //Users = new GenericRepository<User>(_context);
     }
 
     public async Task<int> SaveAsync()

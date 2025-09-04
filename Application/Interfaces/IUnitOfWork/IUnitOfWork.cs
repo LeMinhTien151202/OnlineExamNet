@@ -11,10 +11,10 @@ public interface IUnitOfWork : IDisposable
     public IGenericRepository<Category> Categories { get; }
     public IGenericRepository<Level> Levels { get; }
     public IGenericRepository<Exam> Exams { get; }
-    public IGenericRepository<Role> Roles { get; }
+    //public IGenericRepository<Role> Roles { get; }
     public IGenericRepository<Question> Questions { get; }
     public IGenericRepository<Result> Results { get; }
-    public IGenericRepository<User> Users { get; }
+    //public IGenericRepository<User> Users { get; }
 
     Task<int> SaveAsync();
 }

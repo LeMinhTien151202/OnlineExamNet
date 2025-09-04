@@ -16,8 +16,8 @@ namespace ExamOnline.Helpers
                 .ReverseMap();
             CreateMap<Result, ResultDTO>()
                 .ReverseMap();
-            CreateMap<Role, RoleDTO>()
-                .ReverseMap();
+            //CreateMap<Role, RoleDTO>()
+            //    .ReverseMap();
         }
     }
 }
