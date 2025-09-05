@@ -1,4 +1,5 @@
-﻿using ExamOnline.Data;
+﻿using Domain.Entities;
+using ExamOnline.Data;
 using ExamOnline.Interfaces.ICategory;
 using ExamOnline.Interfaces.IExam;
 using ExamOnline.Interfaces.ILevel;
@@ -15,21 +16,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Configuration;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    // Bạn có thể cấu hình các tùy chọn về mật khẩu, khóa tài khoản, v.v. tại đây
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = true;
-    options.Password.RequiredLength = 6;
-})
-.AddEntityFrameworkStores<ExamOnlineContext>()
-.AddDefaultTokenProviders();
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+//{
+//    // Bạn có thể cấu hình các tùy chọn về mật khẩu, khóa tài khoản, v.v. tại đây
+//    options.Password.RequireDigit = true;
+//    options.Password.RequireLowercase = true;
+//    options.Password.RequireNonAlphanumeric = false;
+//    options.Password.RequireUppercase = true;
+//    options.Password.RequiredLength = 6;
+//})
+//.AddEntityFrameworkStores<ExamOnlineContext>()
+//.AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ExamOnlineContext>()
+    .AddDefaultTokenProviders();
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ExamOnlineContext>(options =>

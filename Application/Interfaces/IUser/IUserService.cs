@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Application.Dtos;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExamOnline.Interfaces.IUser
 {
@@ -7,9 +8,9 @@ namespace ExamOnline.Interfaces.IUser
         Task<IdentityResult> RegisterAsync(RegisterDTO dto);
         Task<string?> LoginAsync(LoginDTO dto);
 
-        Task<List<IdentityUser>> GetAllAsync();
-        Task<IdentityUser?> GetByNameAsync(string username);
-        Task<IdentityResult> UpdateAsync(RegisterDTO dto);
+        Task<List<UserDTO>> GetAllAsync();
+        Task<UserDTO?> GetByNameAsync(string username);
+        Task<IdentityResult> UpdateAsync(string id, RegisterDTO dto);
         Task<IdentityResult> DeleteAsync(string id);
     }
 }

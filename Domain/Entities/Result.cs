@@ -1,4 +1,7 @@
 ﻿
+using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+
 namespace ExamOnline.Models
 {
     [Table("results")]
@@ -19,8 +22,8 @@ namespace ExamOnline.Models
         public string? Score { get; set; }
 
         // Navigation properties
-        //[ForeignKey("UserId")]
-        //public virtual User? User { get; set; }
+        [ForeignKey("UserId")]
+        public ApplicationUser User { get; set; }
 
         [ForeignKey("ExamId")]
         public virtual Exam? Exam { get; set; }

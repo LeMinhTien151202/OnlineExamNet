@@ -1,4 +1,6 @@
-﻿using ExamOnline.Dtos;
+﻿using Application.Dtos;
+using Domain.Entities;
+using ExamOnline.Dtos;
 using ExamOnline.Exceptions;
 using ExamOnline.Interfaces.IRole;
 using ExamOnline.Interfaces.IToken;
@@ -6,6 +8,10 @@ using ExamOnline.Interfaces.IUser;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ExamOnline.Services
 {
@@ -36,31 +42,107 @@ namespace ExamOnline.Services
             return await _userRepository.DeleteAsync(user);
         }
 
-        public Task<List<IdentityUser>> GetAllAsync()
+        public async Task<List<UserDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var users = await _userRepository.GetAllAsync();
+            var result = new List<UserDTO>();
+
+            foreach (var user in users)
+            {
+                result.Add(await MapToDTOAsync(user));
+            }
+
+            return result;
         }
 
-        public Task<IdentityUser?> GetByNameAsync(string username)
+        public async Task<UserDTO?> GetByNameAsync(string username)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.FindByNameAsync(username);
+            if (user == null) return null;
+
+            return await MapToDTOAsync(user);
         }
 
-        public Task<string?> LoginAsync(LoginDTO dto)
+        public async Task<string?> LoginAsync(LoginDTO dto)
         {
-            throw new NotImplementedException();
+            var user = await _userRepository.FindByNameAsync(dto.UserName!);
+            if (user == null) return null;
+
+            var isPasswordValid = await _userRepository.CheckPasswordAsync(user, dto.PassWord!);
+            if (!isPasswordValid) return null;
+
+            var roles = await _userRepository.GetRolesAsync(user);
+
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.UserName!),
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
+
+        };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public Task<IdentityResult> RegisterAsync(RegisterDTO dto)
+        public async Task<IdentityResult> RegisterAsync(RegisterDTO dto)
         {
-            throw new NotImplementedException();
+            var user = new ApplicationUser
+            {
+                FullName = dto.FullName,
+                PhoneNumber = dto.Phone,
+                UserName = dto.UserName,
+                Email = dto.Email
+            };
+
+            var result = await _userRepository.CreateAsync(user, dto.PassWord!);
+            if (result.Succeeded)
+            {
+                await _userRepository.AddToRoleAsync(user, "user");
+            }
+            return result;
         }
 
-        public Task<IdentityResult> UpdateAsync(RegisterDTO dto)
+        public async Task<IdentityResult> UpdateAsync(string id, RegisterDTO dto)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _userRepository.FindByIdAsync(id);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "User không tồn tại" });
+            user.FullName = dto.FullName;
+            user.UserName = dto.UserName;
+            user.Email = dto.Email;
+            user.PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(user, dto.PassWord!);
+            user.PhoneNumber = dto.Phone;
 
+            return await _userRepository.UpdateAsync(user);
+        }
+        public async Task<UserDTO> MapToDTOAsync(ApplicationUser user)
+        {
+            var roles = await _userRepository.GetRolesAsync(user);
+
+            return new UserDTO
+            {
+                Id = user.Id,
+                UserName = user.UserName!,
+                Email = user.Email!,
+                PhoneNumber = user.PhoneNumber!,
+                Roles = roles
+            };
+        }
 
 
         //public async Task<string?> LoginAsync(LoginDTO loginDTO)

@@ -1,18 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace ExamOnline.Interfaces.IUser
 {
     public interface IUserRepository
     {
-        Task<IdentityResult> CreateAsync(IdentityUser user, string password);
-        Task<IdentityUser?> FindByNameAsync(string username);
-        Task<IdentityUser?> FindByIdAsync(string id);
-        Task<List<IdentityUser>> GetAllAsync();
-        Task<IdentityResult> UpdateAsync(IdentityUser user);
-        Task<IdentityResult> DeleteAsync(IdentityUser user);
+        Task<IdentityResult> CreateAsync(ApplicationUser user, string password);
+        Task<ApplicationUser?> FindByNameAsync(string username);
+        Task<ApplicationUser?> FindByIdAsync(string id);
+        Task<List<ApplicationUser>> GetAllAsync();
+        Task<IdentityResult> UpdateAsync(ApplicationUser user);
+        Task<IdentityResult> DeleteAsync(ApplicationUser user);
 
-        Task<bool> CheckPasswordAsync(IdentityUser user, string password);
-        Task<IList<string>> GetRolesAsync(IdentityUser user);
-        Task<IdentityResult> AddToRoleAsync(IdentityUser user, string role);
+        Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+        Task<IList<string>> GetRolesAsync(ApplicationUser user);
+        Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role);
     }
 }
