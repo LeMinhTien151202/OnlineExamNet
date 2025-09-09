@@ -7,10 +7,10 @@ namespace ExamOnline.Interfaces.IUser
     {
         Task<IdentityResult> RegisterAsync(RegisterDTO dto);
         Task<string?> LoginAsync(LoginDTO dto);
-
         Task<List<UserDTO>> GetAllAsync();
         Task<UserDTO?> GetByNameAsync(string username);
         Task<IdentityResult> UpdateAsync(string id, RegisterDTO dto);
         Task<IdentityResult> DeleteAsync(string id);
+        Task<string?> LoginEmailAsync(LoginEmailDTO dto);
     }
 }
