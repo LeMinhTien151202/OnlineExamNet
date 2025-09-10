@@ -1,7 +1,9 @@
-﻿namespace ExamOnline.Interfaces.IToken
+﻿using Domain.Entities;
+
+namespace ExamOnline.Interfaces.IToken
 {
     public interface ITokenService
     {
-        //string CreateToken(User user);
+        Task<string?> CreateToken(ApplicationUser user);
     }
 }

@@ -1,17 +1,27 @@
-﻿using ExamOnline.Exceptions;
+﻿using Application.Dtos;
+using Application.Interfaces.IEmail;
+using Application.Interfaces.Otp;
+using ExamOnline.Exceptions;
 using ExamOnline.Interfaces.IUser;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ExamOnline.Controllers
+namespace Api.Controllers.V1
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IEmailSenderService _emailSender;
+        private readonly IOtpService _otpService;
+        public UserController(IUserService userService, IEmailSenderService emailSender,
+            IOtpService otpService)
         {
             _userService = userService;
+            _emailSender = emailSender;
+            _otpService = otpService;
         }
         [HttpGet]
         //[Authorize(Roles = "admin")]
@@ -41,20 +51,35 @@ namespace ExamOnline.Controllers
             var createdUser = await _userService.RegisterAsync(registerDTO);
             return Ok(createdUser);
         }
+        //[HttpPost("login")]
+        //public async Task<IActionResult> LoginUser([FromBody] LoginDTO loginDTO)
+        //{
+
+        //    var token = await _userService.LoginAsync(loginDTO);
+
+        //    if (token == null)
+        //        throw new UnauthorizedException("username or password not match");
+
+        //    return Ok(new
+        //    {
+        //        Message = "Login successful.",
+        //        Token = token
+        //    });
+        //}
+
+        //login with email
         [HttpPost("login")]
-        public async Task<IActionResult> LoginUser([FromBody] LoginDTO loginDTO)
+        public async Task<IActionResult> LoginUserWithEmail([FromBody] LoginEmailDTO loginEmailDTO)
         {
 
-            var token = await _userService.LoginAsync(loginDTO);
-
-            if (token == null)
-                throw new UnauthorizedException("username or password not match");
-
-            return Ok(new
-            {
-                Message = "Login successful.",
-                Token = token
-            });
+            var message = await _userService.LoginEmailAsync(loginEmailDTO);
+            return Ok(message);
+        }
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] OtpDto model)
+        {
+            var token = await _otpService.VerifyOtpAsync(model);
+            return Ok(new { Token = token });
         }
         [HttpPut("{id}")]
         //[Authorize(Roles = "user, teacher, admin")]

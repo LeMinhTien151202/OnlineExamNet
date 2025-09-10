@@ -7,6 +7,7 @@ namespace ExamOnline.Interfaces.IUser
     {
         Task<IdentityResult> CreateAsync(ApplicationUser user, string password);
         Task<ApplicationUser?> FindByNameAsync(string username);
+        Task<ApplicationUser?> FindByEmailAsync(string email);
         Task<ApplicationUser?> FindByIdAsync(string id);
         Task<List<ApplicationUser>> GetAllAsync();
         Task<IdentityResult> UpdateAsync(ApplicationUser user);

@@ -50,6 +50,11 @@ namespace ExamOnline.Repositories
             return await _userManager.DeleteAsync(user);
         }
 
+        public async Task<ApplicationUser?> FindByEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
         public async Task<ApplicationUser?> FindByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);

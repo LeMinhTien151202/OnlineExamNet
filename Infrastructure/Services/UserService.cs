@@ -1,4 +1,6 @@
 ﻿using Application.Dtos;
+using Application.Interfaces.IEmail;
+using Application.Interfaces.Otp;
 using Domain.Entities;
 using ExamOnline.Dtos;
 using ExamOnline.Exceptions;
@@ -22,15 +24,21 @@ namespace ExamOnline.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _config;
+        private static Dictionary<string, string> _otpStorage = new(); // userId - otp
+        private readonly IEmailSenderService _emailSender;
+        private readonly IOtpService _otpService;
         public UserService(IMapper mapper, ExamOnlineContext context
             , ITokenService tokenService, IUnitOfWork unitOfWork, 
-            IUserRepository userRepository, IConfiguration config)
+            IUserRepository userRepository, IConfiguration config,
+            IEmailSenderService emailSender, IOtpService otpService)
         {
             _context = context;
             _tokenService = tokenService;
             _unitOfWork = unitOfWork;
             _userRepository = userRepository;
             _config = config;
+            _emailSender = emailSender;
+            _otpService = otpService;
         }
 
         public async Task<IdentityResult> DeleteAsync(string id)
@@ -73,30 +81,37 @@ namespace ExamOnline.Services
 
             var roles = await _userRepository.GetRolesAsync(user);
 
-            var claims = new List<Claim>
+            var token = await _tokenService.CreateToken(user);
+
+            return token;
+        }
+
+        public async Task<string?> LoginEmailAsync(LoginEmailDTO dto)
         {
-            new Claim(ClaimTypes.Name, user.UserName!),
-            new Claim(ClaimTypes.NameIdentifier, user.Id)
-
-        };
-
-            foreach (var role in roles)
+            var user = await _userRepository.FindByEmailAsync(dto.Email!);
+            if (user == null)
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                throw new UnauthorizedException("Email or password not match");
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var isPasswordValid = await _userRepository.CheckPasswordAsync(user, dto.Password!);
+            if (!isPasswordValid)
+            {
+                throw new UnauthorizedException("Email or password not match");
+            }
+            // Sinh OTP bằng service riêng
+            var otp = _otpService.GenerateOtp(user.Id);
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds
-            );
+            try
+            {
+                await _emailSender.SendEmailAsync(user.Email, "Your OTP Code", $"Your OTP is: {otp}");
+            }
+            catch (Exception)
+            {
+                throw new Exception("Failed to send OTP email. Please try again later.");
+            }
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return "OTP sent to your email. Please verify.";
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterDTO dto)
@@ -143,72 +158,5 @@ namespace ExamOnline.Services
                 Roles = roles
             };
         }
-
-
-        //public async Task<string?> LoginAsync(LoginDTO loginDTO)
-        //{
-        //    var user = await _context.Users
-        //    .Include(u => u.Role)
-        //    .FirstOrDefaultAsync(u => u.UserName!.Equals(loginDTO.UserName, StringComparison.Ordinal));
-
-        //    if (user == null)
-        //       return null;
-
-        //    // So sánh mật khẩu
-        //    if (!BCrypt.Net.BCrypt.Verify(loginDTO.PassWord, user.PassWord))
-        //        return null;
-
-        //    return _tokenService.CreateToken(user);
-        //}
-
-        //public async Task<string?> RegisterAsync(RegisterDTO registerDTO)
-        //{
-        //    var role = await _unitOfWork.Roles.GetByIdAsync(registerDTO.RoleId);
-        //    if (role == null)
-        //    {
-        //        throw new BadRequestException("Role does not exist.");
-        //    }
-        //    if (await _context.Users.AnyAsync(u => u.UserName == registerDTO.UserName))
-        //    {
-        //        throw new BadRequestException("User name already exists.");
-        //    }
-        //    var passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.PassWord);
-        //    var user = new User
-        //    {
-        //        UserName = registerDTO.UserName,
-        //        Phone = registerDTO.Phone,
-        //        PassWord = passwordHash,
-        //        Email = registerDTO.Email,
-        //        RoleId = registerDTO.RoleId
-        //    };
-        //    var createdUser = await _unitOfWork.Users.CreateAsync(user);
-        //    await _context.SaveChangesAsync();
-        //    return "User created successfully.";
-        //}
-
-        //public async Task<User?> UpdateUserAsync(int id, RegisterDTO registerDTO)
-        //{
-        //    var role = await _unitOfWork.Roles.GetByIdAsync(registerDTO.RoleId);
-        //    if (role == null)
-        //    {
-        //        throw new BadRequestException($"Role with ID {registerDTO.RoleId} does not exist.");
-        //    }
-        //    var existingUser = await _unitOfWork.Users.GetByIdAsync(id);
-        //    if (existingUser == null)
-        //    {
-        //        return null; // User not found
-        //    }
-        //    var passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.PassWord);
-
-        //    existingUser.UserId = id;
-        //    existingUser.UserName = registerDTO.UserName;
-        //    existingUser.Phone = registerDTO.Phone;
-        //    existingUser.PassWord = passwordHash;
-        //    existingUser.Email = registerDTO.Email;
-        //    existingUser.RoleId = registerDTO.RoleId;
-
-        //    var updatedUser = await _unitOfWork.Users.UpdateAsync(existingUser);
-        //    return updatedUser;
-        //}
     }
 }
