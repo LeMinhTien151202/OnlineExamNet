@@ -38,6 +38,16 @@ var builder = WebApplication.CreateBuilder(args);
 //.AddEntityFrameworkStores<ExamOnlineContext>()
 //.AddDefaultTokenProviders();
 // Thêm API Versioning
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // Thay thế bằng URL frontend của bạn
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
@@ -134,7 +144,6 @@ var app = builder.Build();
 app.UseGlobalExceptionHandler();
 // Middleware xử lý exception
 app.UseMiddleware<ExamOnline.Middlewares.ExceptionMiddleware>();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -153,6 +162,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
